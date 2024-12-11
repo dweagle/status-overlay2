@@ -2,10 +2,12 @@ import os
 import sys
 import signal
 import logging
+import shutil
 from logging.handlers import RotatingFileHandler
 from validate_settings import validate_settings
 from settings import create_settings_file
 from overlay_generator import create_library_yaml
+
 
 main_directory = '/config'
 log_directory = os.path.join(main_directory, "logs")
