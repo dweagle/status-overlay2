@@ -8,8 +8,6 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
 from datetime import datetime, timedelta
 
-logger = logging.getLogger(__name__)
-
 # Gracefully shutdown function
 def shutdown_gracefully(signal, frame):
     logger.info("Gracefully shutting down...")
@@ -19,14 +17,14 @@ def shutdown_gracefully(signal, frame):
 # Register
 signal.signal(signal.SIGTERM, shutdown_gracefully)
 
-# # Configure logger
-# logging.getLogger('apscheduler').setLevel(logging.ERROR)
-# logger = logging.getLogger()
-# logger.setLevel(logging.INFO)
-# ch = logging.StreamHandler()
-# formatter = logging.Formatter('%(asctime)s - %(levelname)-8s %(message)s', "%m/%d/%Y %H:%M")
-# ch.setFormatter(formatter)
-# logger.addHandler(ch)
+# Configure logger
+logging.getLogger('apscheduler').setLevel(logging.ERROR)
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
+ch = logging.StreamHandler()
+formatter = logging.Formatter('%(asctime)s - %(levelname)-8s %(message)s', "%m/%d/%Y %H:%M")
+ch.setFormatter(formatter)
+logger.addHandler(ch)
 
 # Define the path to the scripts folder and main.py script
 scripts_folder = '/app'
