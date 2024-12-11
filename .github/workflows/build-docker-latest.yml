@@ -1,12 +1,16 @@
 name: Docker Latest Build
 
 on:
-  push:
-    branches: [ "main" ]
+  pull_request:
+    branches:
+      - main  # or the target branch where you want the PR to merge
+    types:
+      - closed
   workflow_dispatch:
 
 jobs:
   docker-build-latest:
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     steps:
       - name: Check Out Repo
