@@ -2,10 +2,11 @@ import os
 import subprocess
 import sys
 import signal
-from apscheduler.schedulers.background import BackgroundScheduler
-from apscheduler.triggers.cron import CronTrigger
 import time
 import logging
+from apscheduler.schedulers.background import BackgroundScheduler
+from apscheduler.triggers.cron import CronTrigger
+from datetime import datetime, timedelta
 
 # Gracefully shutdown function
 def shutdown_gracefully(signal, frame):
@@ -84,11 +85,18 @@ if __name__ == "__main__":
     scheduler.start()
     logger.info("Scheduler is running.")
 
+    # Initialize the last log time for "Checking schedule..." message
+    last_log_time = datetime.now() - timedelta(minutes=15)  # Log immediately on the first run
+    log_interval = timedelta(minutes=15)  # 15-minute interval for logging this message
+
     # Keep the script running to allow the scheduler to trigger main.py
     try:
         while True:
             time.sleep(60)  # Sleep to reduce CPU usage
-            logger.info(f"Checking schedule...Next run at {hour}:{minute}.")
+            current_time = datetime.now()
+            if current_time - last_log_time >= log_interval:
+                logger.info(f"Checking schedule...Next run at {hour}:{minute}.")
+                last_log_time = current_time
     except (KeyboardInterrupt, SystemExit):
         logger.info("Shutting down scheduler...")
         scheduler.shutdown()
