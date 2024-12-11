@@ -1,12 +1,9 @@
 # Use a Python slim base image
 FROM python:3.10-slim
 
-# Install tzdata for timezone support and build dependencies
+# Install tzdata for timezone support
 RUN apt-get update && apt-get install -y --no-install-recommends \
     tzdata \
-    gcc \
-    python3-dev \
-    build-essential \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Set Timezone environment variable (can be overridden)
