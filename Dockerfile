@@ -9,9 +9,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Set default timezone to UTC if TZ is not set
-ARG DEFAULT_TZ=UTC
-ENV TZ=${TZ:-$DEFAULT_TZ}
+ENV TZ=UTC
 
 # Configure timezone with fallback
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
@@ -33,10 +31,7 @@ COPY . .
 # Stage 2: Runtime stage
 FROM python:3.10-slim AS runtime
 
-# Set default timezone to UTC if TZ is not set
-ARG DEFAULT_TZ=UTC
-ENV TZ=${TZ:-$DEFAULT_TZ}
-
+ENV TZ=UTC
 # Configure timezone with fallback
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
