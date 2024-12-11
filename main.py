@@ -12,8 +12,8 @@ log_directory = os.path.join(main_directory, "logs")
 settings_file_path = os.path.join(main_directory, "overlay-settings.yml")
 
 # Create font folder
-font_src = "/app/font"
-font_dest = "/config/font"
+font_src = "/fonts"
+font_dest = "/config/fonts"
 # Copy font directory to /config if it doesn't exist
 if not os.path.exists(font_dest):
     shutil.copytree(font_src, font_dest)
