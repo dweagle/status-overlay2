@@ -1,5 +1,5 @@
 # Stage 1: Build stage
-FROM python:3.10-slim as builder
+FROM python:3.10-slim AS builder
 
 # Install build dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -31,7 +31,7 @@ COPY ./fonts /fonts
 COPY . .
 
 # Stage 2: Runtime stage
-FROM python:3.10-slim
+FROM python:3.10-slim AS runtime
 
 # Set default timezone to UTC if TZ is not set
 ARG DEFAULT_TZ=UTC
