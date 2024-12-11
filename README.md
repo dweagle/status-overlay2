@@ -55,7 +55,7 @@ libraries:                          # Plex library (SHOWS ONLY) names to create 
 overlay_settings:                  
   days_ahead: 28                            # Days ahead for Returning Next (30 Days Max).
   overlay_save_folder:                      # Kometa overlay folders (leave blank for script folder).
-  font:                                     # Kometa must have permissions for this folder. Will default to included font in 'scriptparentfolder/fonts/Inter-Medium.ttf'.
+  font:                                     # Kometa must have permissions for this folder. Will default to included font in 'config/fonts/Inter-Medium.ttf'.
   font_size: 45                             # Font size for overlay text.
   font_color: "#FFFFFF"                     # Font color (kometa requires #RGB, #RGBA, #RRGGBB or #RRGGBBAA, e.g., #FFFFFF).
   horizontal_align: center                  # Horizontal alignment (e.g., center, left, right).
