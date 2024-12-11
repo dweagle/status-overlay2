@@ -1,9 +1,12 @@
 # Use a Python slim base image
 FROM python:3.10-slim
 
-# Install tzdata for timezone support
+# Install tzdata for timezone support and build dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
     tzdata \
+    gcc \
+    python3-dev \
+    build-essential \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Set Timezone environment variable (can be overridden)
@@ -21,6 +24,9 @@ RUN pip install --no-cache-dir --upgrade pip
 # Install Python dependencies
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
+
+# Remove build dependencies to reduce image size
+RUN apt-get purge -y --auto-remove gcc python3-dev build-essential
 
 # Copy the Python scripts into the container in one command
 COPY ./fonts /fonts
