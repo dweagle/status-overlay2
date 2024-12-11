@@ -1,4 +1,4 @@
-# Start from a Python base image
+# Use a Python slim base image
 FROM python:3.10-slim
 
 # Install tzdata for timezone support and build dependencies
@@ -7,7 +7,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     gcc \
     python3-dev \
     build-essential \
-    && rm -rf /var/lib/apt/lists/*
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Set Timezone environment variable (can be overridden)
 ENV TZ=UTC
@@ -19,19 +19,15 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 WORKDIR /app
 
 # Upgrade pip to the latest version
-RUN pip install --upgrade pip
+RUN pip install --no-cache-dir --upgrade pip
 
 # Install Python dependencies
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy the Python scripts into the container
+# Copy the Python scripts into the container in one command
 COPY ./fonts /fonts
-COPY run_status.py .
-COPY main.py .
-COPY settings.py .
-COPY overlay_generator.py .
-COPY validate_settings.py .
+COPY . .
 
 # Default command to run the script
 CMD ["python3", "run_status.py"]
