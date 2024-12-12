@@ -173,20 +173,27 @@ def load_settings(main_directory, log_message=True):
         logger.error(f"Error loading settings file: {e}")
         raise  # Re-raise exception after logging
 
+def update_dict(existing, defaults):
+    for key, value in defaults.items():
+        if isinstance(value, dict):
+            existing[key] = update_dict(existing.get(key, {}), value)
+        else:
+            if key not in existing:
+                existing[key] = value
+    return existing
+
 def update_settings_file(main_directory):
     settings_file_path = os.path.join(main_directory, settings_filename)
     
     try:
         existing_settings = load_settings(main_directory, log_message=False)
         
-        # Add missing sections
-        for key, value in yaml.load(settings).items():
-            if key not in existing_settings:
-                existing_settings[key] = value
+        # Update existing settings with default settings
+        updated_settings = update_dict(existing_settings, yaml.load(settings))
         
         # Save the updated settings back to the file
         with open(settings_file_path, 'w') as file:
-            yaml.dump(existing_settings, file)
+            yaml.dump(updated_settings, file)
         logger.info(f"Updated settings file at '{settings_file_path}' with missing sections")
     
     except Exception as e:
