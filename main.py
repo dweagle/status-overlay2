@@ -6,7 +6,7 @@ import shutil
 from logging.handlers import RotatingFileHandler
 from validate_settings import validate_settings
 from settings import create_settings_file
-from overlay_generator import create_library_yaml
+from yaml_generator import create_library_yaml, create_collection_yaml
 
 
 main_directory = '/config'
@@ -44,7 +44,7 @@ def log_setup():
     log_handler = RotatingFileHandler(log_path, maxBytes=5 * 1024 * 1024, backupCount=5)
     
     # Define log format
-    log_formatter = logging.Formatter('%(asctime)s - %(levelname)-8s %(message)s', "%m/%d/%Y %H:%M")
+    log_formatter = logging.Formatter('%(asctime)s - %(levelname)-9s %(message)s', "%m/%d/%Y %H:%M")
     log_handler.setFormatter(log_formatter)
 
     # Add handler to the logger
@@ -89,12 +89,14 @@ def main():
             logger.error("Validation failed. Please fix the issues in the settings file and rerun the script.")
             return  # Exit if validation fails
 
-        # Generate overlay files after validation succeeds
+        # Generate overlay files and collection files after validation succeeds
         logger.info("")
         logger.info("Validation successful. Generating overlay files for Kometa.")
         logger.info("")
         create_library_yaml(main_directory)
-        logger.info("All library overlay files created. Returning to schedule.")
+        create_collection_yaml(main_directory)
+        logger.info("All library overlay and collection files created.")
+        logger.info("")
         
     except Exception as e:
         logger.error(f"An error occurred: {e}")
