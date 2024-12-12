@@ -5,7 +5,7 @@ import logging
 import shutil
 from logging.handlers import RotatingFileHandler
 from validate_settings import validate_settings
-from settings import create_settings_file
+from settings import create_settings_file, update_settings_file
 from yaml_generator import create_library_yaml, create_collection_yaml
 
 
@@ -83,6 +83,10 @@ def main():
             logger.info("Please edit the 'overlay-settings.yml' to your preffered Kometa settings and rerun the script.")
             return  # Exit the script after creating the settings file
         
+                # Update the settings file with any missing sections
+        logger.info("Updating settings file with missing sections...")
+        update_settings_file(main_directory)
+
         # Validate the settings before proceeding
         logger.info("Validating settings file...")
         if not validate_settings(main_directory):
