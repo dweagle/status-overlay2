@@ -19,10 +19,12 @@ signal.signal(signal.SIGTERM, shutdown_gracefully)
 
 # Create default settings yaml file
 settings = f"""# Settings for overlay configurations
-# This script will create show status overlay ymls that Kometa can use to create new, airing, ended, canceled and returning overlays.  
-# These overlays files will create dates on the poster overlays. Setting the script to run daily will update airing/return dates.
-# I put the script folder in my Kometa directory and set a cron/task job to run main.py daily prior to kometa running.
-# Then I link the yaml files to run in my Kometa config.
+# This containers' scripts will create show status overlay ymls that Kometa can use to create new, airing, ended, canceled and returning overlays.  
+# These overlays files will create dates on the poster overlays. Setting the container schedule to run daily will update airing/return dates.
+
+# Mounting this container volumes into your Kometa folder may be the best option.  Then Kometa will automatically have access to the files created.
+
+# A Returning Soon Collection yaml that can be used with Kometa is also created.  Settings for this are at the very bottom of this settings file.
 
 # TMDB_Discover settings pull series info to find air dates, etc.  Using the default settings
 # limits the "junk" show results that are pulled for a library with mainly US, English language shows.  
@@ -46,8 +48,8 @@ libraries:                          # Plex library (SHOWS ONLY) names to create 
 # This creates a consistent overlay across all shows.    
 overlay_settings:                  
   days_ahead: 28                            # Days ahead for Returning Next (30 Days Max).
-  overlay_save_folder:                      # Kometa overlay folders (leave blank for script folder).
-  font:                                     # Kometa must have permissions for this folder. Will default to included font in 'scriptparentfolder/fonts/Inter-Medium.ttf'.
+  overlay_save_folder:                      # Kometa overlay folders (leave blank for config folder). Kometa must have permissions to this folder
+  font:                                     # Kometa must have permissions for this folder. Will default to included font in 'config/fonts/Inter-Medium.ttf'.
   font_size: 45                             # Font size for overlay text.
   font_color: "#FFFFFF"                     # Font color (kometa requires #RGB, #RGBA, #RRGGBB or #RRGGBBAA, e.g., #FFFFFF).
   horizontal_align: center                  # Horizontal alignment (e.g., center, left, right).
@@ -128,7 +130,16 @@ use_overlays:
     back_color: "#103197"                   # Default is "#103197"
     text: "R E T U R N S "                  # Displays as R E T U R N S  12/23 on overlays.
     font_color: "#FFFFFF"     
-    """
+
+# Creates a Returning Soon collection yml file that can be used in Kometa to display a collection in Plex
+returning_soon_collection:
+  use: True                                 # True to create collection yml. False to not create.
+  collection_save_folder:                   # Path to collection yml folder (leave blank for /config folder). Kometa-must have permissions to this folder.
+  poster_source: url                        # url or file.  url for outside source, file for local poster. Defaults to url
+  poster_path:                              # Path to poster file.  Can be a url link or file path. Defaults to url Kometa git html poster.
+  visible_home: "true"                      # Collecition visible on home page.  "true" or "false"
+  visible_shared: "true"                    # Collection visible on friends/users home page. "true" or "false"
+"""
 
 def create_settings_file(main_directory):
 

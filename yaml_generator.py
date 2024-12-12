@@ -68,6 +68,12 @@ DEFAULTS = {
     'returning_back_color': '#103197',
     'returning_text': 'R E T U R N I N G',
     'returns_text': 'R E T U R N S ',
+
+    'collection_use': True,
+    'poster_source': 'url',
+    'poster_path': 'https://raw.githubusercontent.com/meisnate12/Plex-Meta-Manager-Images/master/chart/Returning%20Soon.jpg',
+    'visible_home': True,
+    'visible_shared': True
 }
 
 def get_with_defaults(settings, primary_key, fallback_key=None):
@@ -99,7 +105,8 @@ def get_with_defaults(settings, primary_key, fallback_key=None):
 ############################
 indentlog = "   " # indent for 3 spaces in log
 indentlog2 = "      " # indent for 6 spaces in log
-indentlog3 = "          " #indent for 9 spaces in log 
+indentlog3 = "          " #indent for 9 spaces in log
+indent2 = "    "  # indent 2 tabs (4 spaces) for kometa yaml spacing
 indent3 = "      " # indent 3 tabs (6 spaces) for kometa yaml spacing
 
 def create_library_yaml(main_directory):
@@ -598,7 +605,7 @@ templates:
             if overlay_save_folder:
                 logger.info(f"Using custom overlay save folder: {overlay_save_folder}")
             else:
-                logger.info("No custom overlay save folder provided.  Using script folder.")
+                logger.info("No custom overlay save folder provided.  Using /config folder.")
                 overlay_save_folder = main_directory
 
             # Ensure the save folder exists and exit script if it doesn't
@@ -624,3 +631,131 @@ templates:
 
     except Exception as e:
         logger.error(f"An error occurred while generating overlay files: {e}")
+
+#############################
+# RETURNING SOON COLLECTION #
+#############################
+
+def create_collection_yaml(main_directory):
+    try:
+        # Load settings dynamically when needed
+        settings = load_settings(main_directory, log_message=False)
+
+        # Date calculation for the script
+        current_date = datetime.now()
+
+        # Calculate date for 21 days prior to current date
+        date_45_days_prior = (current_date - timedelta(days=45)).strftime('%m/%d/%Y')
+
+        # Calculate todays date for Returning Soon Collection
+        air_date_today= (current_date).strftime('%m/%d/%Y')
+
+        # Calculate 30 days past the current date
+        thirty_days_past = (current_date + timedelta(days=30)).strftime('%m/%d/%Y')
+        
+        # Get section settings from loaded settings
+        libraries = settings.get('libraries', {})
+
+        overlay_settings = settings.get('overlay_settings', {})
+
+        collection_settings = settings.get('returning_soon_collection', {})
+
+        # Get settings for each library and create yamls
+        for library_name, library_settings in libraries.items():
+            is_anime = get_with_defaults(library_settings, 'is_anime', 'is_anime')
+            use_watch_region = get_with_defaults(library_settings, 'use_watch_region', 'use_watch_region')
+            
+            if get_with_defaults(collection_settings, "use", "collection_use"):  # If "use" is True, include this section
+                logger.info(f"Returning Soon Collection 'use:' set to true. Creating Returning Soon Collection yaml for {library_name}:")
+
+                # Create Returning Soon collection
+                template_string = f"""
+# RETURNING SOON COLLECTION
+collections:
+  Returning Soon Collection {library_name}:
+    {get_with_defaults(collection_settings, 'poster_source', 'poster_source')}_poster: "{get_with_defaults(collection_settings, 'poster_path', 'poster_path')}"
+    collection_order: custom
+    visible_home: {get_with_defaults(collection_settings, 'visible_home', 'visible_home')}
+    visible_shared: {get_with_defaults(collection_settings, 'visible_shared', 'visible_shared')}
+    sync_mode: sync
+    tmdb_discover:
+      air_date.gt: {air_date_today}
+      air_date.lte: {thirty_days_past}
+      timezone: {get_with_defaults(overlay_settings, 'timezone', 'timezone')}
+      with_status: 0
+"""
+                # Conditionally add the "watch_region" and "with_watch_monetization_types" line
+                if use_watch_region:
+                    logger.info(f"{indentlog}'watch_region' set to 'true'")
+                    logger.info(f"{indentlog2}Adding 'watch_region: {get_with_defaults(overlay_settings, 'watch_region', 'watch_region')}'.")
+                    logger.info(f"{indentlog2}Adding 'with_watch_monetization_type: {get_with_defaults(overlay_settings, 'with_watch_monetization_types', 'with_watch_monetization_types')}'.")
+                    template_string += f"{indent3}watch_region: {get_with_defaults(overlay_settings, 'watch_region', 'watch_region')}\n"
+                    template_string += f"{indent3}with_watch_monetization_types: {get_with_defaults(overlay_settings, 'with_watch_monetization_types', 'with_watch_monetization_types')}\n"
+
+                else:
+                    logger.info(f"{indentlog}'watch_region' set to 'false'")
+                    logger.info(f"{indentlog2}Removing 'watch_region'.")
+                    logger.info(f"{indentlog2}Removing 'with_watch_monetizaion_types'.")
+                
+                # Conditionally add the 'with_original_language' line
+                if not is_anime:
+                    logger.info(f"{indentlog}'is_anime' set to 'false'")
+                    logger.info(f"{indentlog2}Adding 'with_original_language: {get_with_defaults(overlay_settings, 'with_original_language', 'with_original_language')}'.")
+                    template_string += f"{indent3}with_original_language: {get_with_defaults(overlay_settings, 'with_original_language', 'with_original_language')}\n"
+
+                else:
+                    logger.info(f"{indentlog}'is_anime' set to 'true'")
+                    logger.info(f"{indentlog2}Removing 'with_original_language'.")
+
+                    # Add the 'limit' setting, always included
+                template_string += f"{indent3}limit: {get_with_defaults(overlay_settings, 'limit', 'limit')}\n"
+                
+                template_string += f"{indent2}filters:\n"
+                template_string += f"{indent3}last_episode_aired.before: {date_45_days_prior}\n"
+
+############################
+#  WRITE COLLECTION YAML   #
+############################
+
+                # Determine the save folder for overlays
+                collection_save_folder = collection_settings.get('collection_save_folder')
+
+                if collection_save_folder and isinstance(collection_save_folder, str):
+                    collection_save_folder = collection_save_folder.strip()
+
+                else:
+                    collection_save_folder = ''
+
+                if collection_save_folder:
+                    logger.info(f"Using custom collection save folder: {collection_save_folder}")
+                else:
+                    logger.info("No custom collection save folder provided.  Using /config folder.")
+                    collection_save_folder = main_directory
+
+                # Ensure the save folder exists and exit script if it doesn't
+                if not os.path.exists(collection_save_folder):
+                    logger.warning(f"Collection folder doesn't exist or permissions not set.  Exiting script")
+                    logger.warning(f"If using path outside of mounted container config volume, you need to mount a volume to this.")
+                    exit()
+
+                # Normalize the library name
+                normalized_library_name = library_name.lower().replace(' ', '-')
+
+                # Create the output file path
+                output_file_path = os.path.join(collection_save_folder, f"collection-returning-soon-{normalized_library_name}.yml")
+                
+                try:
+                    with open(output_file_path, 'w') as file:
+                        file.write(template_string)
+                    logger.info(f"Generated Returning Soon Collection for {library_name} at '{output_file_path}'")
+                    logger.info("")
+                except Exception as e:
+                    logger.error(f"Error generating collection for {library_name}: {e}")
+                    logger.info("")
+
+
+            else:
+                logger.info(f"{indentlog}'Returning Soon' collection 'use:' set to false. 'Returning Soon' collection not created")
+
+    except Exception as e:
+        logger.error(f"An error occurred while generating collection files: {e}")

@@ -22,7 +22,7 @@ logging.getLogger('apscheduler').setLevel(logging.ERROR)
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 ch = logging.StreamHandler()
-formatter = logging.Formatter('%(asctime)s - %(levelname)-8s %(message)s', "%m/%d/%Y %H:%M")
+formatter = logging.Formatter('%(asctime)s - %(levelname)-9s %(message)s', "%m/%d/%Y %H:%M")
 ch.setFormatter(formatter)
 logger.addHandler(ch)
 
