@@ -672,12 +672,16 @@ def create_collection_yaml(main_directory):
                 template_string = f"""
 # RETURNING SOON COLLECTION
 collections:
-  Returning Soon Collection {library_name}:
+  Returning Soon:
     {get_with_defaults(collection_settings, 'poster_source', 'poster_source')}_poster: "{get_with_defaults(collection_settings, 'poster_path', 'poster_path')}"
     collection_order: custom
     visible_home: {get_with_defaults(collection_settings, 'visible_home', 'visible_home')}
     visible_shared: {get_with_defaults(collection_settings, 'visible_shared', 'visible_shared')}
     sync_mode: sync
+    summary: "TV Shows returning soon!"
+    minimum_items: 1
+    delete_below_minimum: true
+    sort_title: "!012_Returning"
     tmdb_discover:
       air_date.gte: {air_date_tomorrow}
       air_date.lte: {thirty_days_past}
