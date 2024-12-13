@@ -70,7 +70,6 @@ settings = OrderedDict({
         "back_height": 55,
         "back_radius": 30,
         "ignore_blank_results": "true",
-        "timezone": "America/New_York",
         "with_status": 0,
         "watch_region": "US",
         "with_original_language": "en",
