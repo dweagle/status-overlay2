@@ -218,12 +218,6 @@ def validate_settings(main_directory):
         else:
             logger.info(f"{indent1}ignore_blank_results: {ignore_blank_results}")
 
-        timezone = overlay_settings.get('timezone')
-        if timezone is None:
-            logger.warning(f"{indent1}timezone: 'timezone' is missing or blank.  Defaulting to 'America/New_York'.")
-        else:
-            logger.info(f"{indent1}time_zone: {timezone}")
-
         with_status = overlay_settings.get('with_status')
         valid_status = {0, 1, 2, 3, 4, 5}
         if with_status is None:
