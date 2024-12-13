@@ -76,6 +76,8 @@ DEFAULTS = {
     'visible_shared': True
 }
 
+timezone = os.getenv('TZ', DEFAULTS['timezone'])
+
 def get_with_defaults(settings, primary_key, fallback_key=None):
     def is_valid_color(value):
         # Check if the value is a valid #RGB, #RGBA, #RRGGBB, or #RRGGBBAA color code.
@@ -167,7 +169,7 @@ templates:
     tmdb_discover:
       air_date.gte: <<date>>
       air_date.lte: <<date>>
-      timezone: {get_with_defaults(overlay_settings, 'timezone', 'timezone')}
+      timezone: {timezone}
       with_status: <<status>>
 """
         
@@ -685,7 +687,7 @@ collections:
     tmdb_discover:
       air_date.gte: {air_date_tomorrow}
       air_date.lte: {thirty_days_past}
-      timezone: {get_with_defaults(overlay_settings, 'timezone', 'timezone')}
+      timezone: {timezone}
       with_status: 0
 """
                 # Conditionally add the "watch_region" and "with_watch_monetization_types" line
