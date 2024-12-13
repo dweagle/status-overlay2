@@ -647,9 +647,9 @@ def create_collection_yaml(main_directory):
         # Calculate date for 21 days prior to current date
         date_45_days_prior = (current_date - timedelta(days=45)).strftime('%m/%d/%Y')
 
-        # Calculate todays date for Returning Soon Collection
-        air_date_today= (current_date).strftime('%m/%d/%Y')
-
+        # Calculate the date tomorrow
+        air_date_tomorrow = (current_date + timedelta(days=1)).strftime('%m/%d/%Y')
+        
         # Calculate 30 days past the current date
         thirty_days_past = (current_date + timedelta(days=30)).strftime('%m/%d/%Y')
         
@@ -679,7 +679,7 @@ collections:
     visible_shared: {get_with_defaults(collection_settings, 'visible_shared', 'visible_shared')}
     sync_mode: sync
     tmdb_discover:
-      air_date.gt: {air_date_today}
+      air_date.gte: {air_date_tomorrow}
       air_date.lte: {thirty_days_past}
       timezone: {get_with_defaults(overlay_settings, 'timezone', 'timezone')}
       with_status: 0
