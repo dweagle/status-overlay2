@@ -9,9 +9,9 @@ services:
     container_name: status-overlay
     user: 1000:1002
     environment:
-      - TZ=America/New_York
-      - SCHEDULE=06:00  # Schedule run time
-      - RUN_NOW:false   # true will bypass the schedule once on container startup
+      - TZ=America/New_York  # System time and called for some overlays
+      - SCHEDULE=06:00       # Schedule run time
+      - RUN_NOW:false        # true will bypass the schedule once on container startup
     volumes:
       # Mount your local directory to the containers internal config folder.
       # By default, the logs, settings, and overlays will be created here.
