@@ -80,7 +80,6 @@ overlay_settings:
   ignore_blank_results: "true"  # Kometa error processing (true or false).
 
   # TMDB DISCOVER SETTINGS #    SEE TMDB API FOR MORE DETAILS - THESE SETTINGS ARE IDEAL.
-  timezone: America/New_York    # TMDB DISCOVER - UTC timezone standards (default American/New_York).
   with_status: 0                # TMDB DISCOVER - Returning Series: 0 Planned: 1 In Production: 2 Ended: 3 Canceled: 4 Pilot: 5.
   watch_region: US              # TMDB DISCOVER - Default US - Must be valid TMDB region code.
   with_original_language: en    # TMDB DISCOVER - Default is en (English) - Must Be valid TMDB language code.
